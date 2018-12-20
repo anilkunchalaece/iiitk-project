@@ -11,6 +11,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 export class MainPage {
 
   unpairedDevices:any;
+  pairedDevices:any;
   loading:any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
@@ -55,6 +56,38 @@ export class MainPage {
 
   }
   
+
+  pairWithSelectedDevice(index){
+    console.log("selected index is "+ index)
+    console.log("selected device is" + JSON.stringify(this.unpairedDevices[index]))
+    alert("connecting with" + this.unpairedDevices[index].name)
+    this.BSerial.connect(this.unpairedDevices[index].address).subscribe((val) => {
+      console.log("connected sucessfully")
+    })
+  }
+
+
+  getPairedDevices(){
+    console.log("listing all paired devices")
+    this.presentLoadingDefault()
+    this.BSerial.list().then((res)=> {
+      console.log("all the paired devices " + JSON.stringify(res))
+      this.pairedDevices = res
+      this.loading.dismiss();
+    },
+    (err) => {
+      console.log("err in getting the paired devices " + JSON.stringify(err))
+    })
+  }
+
+  sendHelloWorld(){
+    this.BSerial.write("Hello World").then( (res) => {
+      console.log("data sent " + JSON.stringify(res))
+    },
+    (err) => {
+      console.log("err in sending hello world " + JSON.stringify(err))
+    })
+  }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MainPage');

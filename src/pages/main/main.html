@@ -8,5 +8,25 @@
 
 
 <ion-content padding>
-<button ion-button (click)="loadDevices()"> Get Devices </button>
+<div>
+<button ion-button (click)="loadDevices()"> Get Unpaired Devices </button>
+<div>
+  <ion-item *ngFor="let dev of unpairedDevices,let i = index" (click)="pairWithSelectedDevice(i)">
+          {{dev.name}}
+  </ion-item>
+</div>
+</div>
+
+<div>
+  <button ion-button (click)="getPairedDevices()">Get Paired Devices </button>
+  <ion-item *ngFor="let dev of pairedDevices, let i = index" click="connectWithPairedDevice(index)">
+    {{dev.name}}
+  </ion-item>
+</div>
+
+
+<div>
+  <button ion-button (click)="sendHelloWorld()"> Send Hello World </button>
+</div>
+
 </ion-content>
