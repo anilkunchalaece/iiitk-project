@@ -62,7 +62,15 @@ export class MainPage {
     console.log("selected device is" + JSON.stringify(this.unpairedDevices[index]))
     alert("connecting with" + this.unpairedDevices[index].name)
     this.BSerial.connect(this.unpairedDevices[index].address).subscribe((val) => {
-      console.log("connected sucessfully")
+      console.log("connected sucessfully " + JSON.stringify(val))
+    })
+  }// end of pairWithSelectedDevice
+
+  connectWithPairedDevice(index){
+    console.log('connect with paired device with index '+ index)
+    alert("connecting with" + this.pairedDevices[index].name)
+    this.BSerial.connect(this.pairedDevices[index].address).subscribe( (val) => {
+      console.log("connected succesfully " + JSON.stringify(val));
     })
   }
 
@@ -78,7 +86,7 @@ export class MainPage {
     (err) => {
       console.log("err in getting the paired devices " + JSON.stringify(err))
     })
-  }
+  }//end of getPairedDevices
 
   sendHelloWorld(){
     this.BSerial.write("Hello World").then( (res) => {
@@ -87,7 +95,19 @@ export class MainPage {
     (err) => {
       console.log("err in sending hello world " + JSON.stringify(err))
     })
+  }// end of sendHelloWorld
+
+  gotData(val){
+    console.log("received val is " + JSON.stringify(val));
+  }// end of gorData
+
+  subscribeError(err){
+    console.log("error in subscribing " + JSON.stringify(err))
   }
+
+  readDataFromArduino(){
+    this.BSerial.subscribe('\n').subscribe(this.gotData,this.subscribeError)
+  }//end of readDataFromArduino
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MainPage');

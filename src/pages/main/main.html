@@ -19,7 +19,7 @@
 
 <div>
   <button ion-button (click)="getPairedDevices()">Get Paired Devices </button>
-  <ion-item *ngFor="let dev of pairedDevices, let i = index" click="connectWithPairedDevice(index)">
+  <ion-item *ngFor="let dev of pairedDevices, let i = index" (click)="connectWithPairedDevice(i)">
     {{dev.name}}
   </ion-item>
 </div>
@@ -27,6 +27,10 @@
 
 <div>
   <button ion-button (click)="sendHelloWorld()"> Send Hello World </button>
+</div>
+
+<div>
+  <button ion-button (click)="readDataFromArduino()"> Read Data </button>
 </div>
 
 </ion-content>
