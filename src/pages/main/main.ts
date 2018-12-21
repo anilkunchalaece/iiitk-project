@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams,LoadingController } from 'ionic-angular';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
-
+import { ChangeDetectorRef } from '@angular/core';
 
 @IonicPage()
 @Component({
@@ -13,9 +13,14 @@ export class MainPage {
   unpairedDevices:any;
   pairedDevices:any;
   loading:any;
+  showData:any = false;
+  turbidity:any;
+  ph:any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              public BSerial: BluetoothSerial, public loadingCtrl: LoadingController) {
+              public BSerial: BluetoothSerial, public loadingCtrl: LoadingController,
+              private cdr: ChangeDetectorRef) {
+             
   }
 
 
@@ -97,16 +102,27 @@ export class MainPage {
     })
   }// end of sendHelloWorld
 
-  gotData(val){
-    console.log("received val is " + JSON.stringify(val));
-  }// end of gorData
-
-  subscribeError(err){
-    console.log("error in subscribing " + JSON.stringify(err))
-  }
-
   readDataFromArduino(){
-    this.BSerial.subscribe('\n').subscribe(this.gotData,this.subscribeError)
+    this.BSerial.subscribe('\n').subscribe(
+      (val) => {
+        let data = val.split(',');
+        data.forEach(element => {
+          if(element.indexOf("T") != -1){
+            this.turbidity = element.slice(1)
+            console.log(this.turbidity);
+          }else if(element.indexOf("P") != -1){
+            this.ph = element.slice(1)
+          }
+        });
+        //fucking change detector 
+        //ref - https://stackoverflow.com/questions/47017533/ionic-bluetooth-serial-subscriberawdata-update-ui
+        this.cdr.detectChanges()
+      },
+      (err) => {
+        console.log("error in subscribing " + JSON.stringify(err));
+      })
+
+
   }//end of readDataFromArduino
 
   ionViewDidLoad() {

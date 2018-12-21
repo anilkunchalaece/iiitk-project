@@ -4,8 +4,20 @@
  * Date : Dec 21 2018
  * 
  * This sketch is used to measure PH and Turbidity of water and send it to the Bluetooth App
+ * 
+ * Connections :
+ *  Turbidity Analog Input -> A0
+ *  Ph Analog Input        -> A1
+ *  
+ *  HC-05 Connections
+ *  HC-05 TX  -> D3 soft Rx
+ *  HC-05 RX  -> D4 soft Tx
+ *  
  */
 
+#include<SoftwareSerial.h>
+
+SoftwareSerial BTSerial(3,4);
 
 //#define DEBUG_ARRAY
 #define DEBUG
@@ -33,11 +45,15 @@ unsigned long blStart = 0;
 
 
 void setup() {
-  Serial.begin(9600);
   pinMode(STATUS_LED,OUTPUT);
-  Serial.println("Dr-Water");
   samplingStart = millis();
   blStart = millis();
+
+  Serial.begin(9600);
+  Serial.println("Dr-Water");
+
+  //start bluetooth
+  BTSerial.begin(9600);
 }//end of setup
 
 void loop() {
@@ -53,6 +69,7 @@ void loop() {
   
     blStart = millis(); //update the blStart
     calculateTheSensorValues();
+    sendValuesToBluetooth();
     
   }//end of blStart
   
@@ -101,7 +118,19 @@ void calculateTheSensorValues(){
   Serial.print("\t Ph : ");
   Serial.println(currentPhValue);
   #endif
-}
+}// end of calculateTheSensorValues
+
+
+void sendValuesToBluetooth(){
+  BTSerial.print("T");
+  BTSerial.print(currentTurbudityValue);
+  BTSerial.print(",");
+  BTSerial.print("P");
+  BTSerial.println(currentPhValue);
+}// end of sendValuesToBluetooth
+
+
+
 
 int getTurbidityVoltage(){
   int vol = analogRead(TURBIDITY_PIN);
